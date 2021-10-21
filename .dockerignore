@@ -1,0 +1,5 @@
+offchain/src/config/*.ts
+offchain/node_modules
+offchain/dist
+!offchain/src/config/global.ts
+!offchain/src/config/index.ts

@@ -1,0 +1,33 @@
+version: "3.5"
+
+services:
+  offchain-postgres:
+    image: postgres:14.0-alpine
+    container_name: offchain-postgres
+    environment:
+      POSTGRES_DB: 'offchain'
+      POSTGRES_USER: 'offchain'
+      POSTGRES_PASSWORD: '12345'
+      POSTGRES_PORT: '5432'
+      POSTGRES_INITDB_ARGS: "--auth-local=trust"
+    ports:
+      - 5432:5432
+    volumes:
+      - ../postgresql/offchain:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+
+  offchain-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: offchain-web
+    container_name: offchain-web
+    environment:
+      POSTGRES_URL: 'postgres://offchain:12345@offchain-postgres:5432/offchain'
+      UPLOADS_DIR: '/uploads'
+    ports:
+      - 5000:5000
+    volumes:
+      - ./uploads:/uploads
+    depends_on:
+      - offchain-postgres

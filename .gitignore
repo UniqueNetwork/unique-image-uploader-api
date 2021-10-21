@@ -1,0 +1,11 @@
+.idea
+.vscode
+.DS_Store
+docker-compose.yml
+uploads
+offchain/dist
+offchain/node_modules
+offchain/package-lock.json
+!offchain/src/config/index.ts
+!offchain/src/config/global.ts
+offchain/src/config/*
