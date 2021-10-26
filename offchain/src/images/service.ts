@@ -8,7 +8,6 @@ import { Repository } from 'typeorm';
 
 import { MimeValidateResult, SimpleStringResult, UploadResult } from './dto';
 import { Image, UploadLog } from './entity';
-import { getConfig } from '../config';
 import * as constants from '../constants';
 
 
@@ -16,8 +15,14 @@ import * as constants from '../constants';
 export class ImageService {
   constructor(
     @Inject('IMAGE_REPOSITORY')
-    private repository: Repository<Image>
+    private repository: Repository<Image>,
+    @Inject('CONFIG')
+    private config
   ) {}
+
+  async all() {
+    return await this.repository.find();
+  }
 
   sha256HashFromBuffer(buffer): SimpleStringResult {
     const hash = createHash('sha256');
@@ -38,6 +43,8 @@ export class ImageService {
     catch (e) {
       return {success: false};
     }
+
+    if(!typeResult) return {success: false};
 
     const isAllowed = config.allowedImageTypes.indexOf(typeResult.mime) >= 0;
 
@@ -67,8 +74,9 @@ export class ImageService {
 
   async uploadFile(file, collectionId: number, log: LogService, ip?: string, userAgent?: string): Promise<UploadResult> {
     if(isNaN(collectionId) || collectionId < 0) return {success: false, error: constants.dataErrors.ERR_INVALID_PAYLOAD};
+    if(!file) return {success: false, error: constants.dataErrors.ERR_INVALID_PAYLOAD};
 
-    const config = getConfig(), fileHash = this.sha256HashFromBuffer(file.buffer);
+    const config = this.config, fileHash = this.sha256HashFromBuffer(file.buffer);
 
     if(!fileHash.success) return {success: false, error: constants.fileErrors.ERR_INTERNAL_ERROR};
 

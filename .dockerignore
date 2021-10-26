@@ -3,3 +3,5 @@ offchain/node_modules
 offchain/dist
 !offchain/src/config/global.ts
 !offchain/src/config/index.ts
+!offchain/src/config/module.ts
+!offchain/src/config/providers.ts

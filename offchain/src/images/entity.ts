@@ -3,7 +3,6 @@ import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
 @Entity()
 export class Image {
   @PrimaryGeneratedColumn({type: 'bigint'})
-
   id: number;
 
   @Index()

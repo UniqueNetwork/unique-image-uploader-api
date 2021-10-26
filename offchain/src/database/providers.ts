@@ -1,11 +1,9 @@
 import { createConnection } from 'typeorm';
-import { getConfig } from '../config';
 
 export const databaseProviders = [
     {
         provide: 'DATABASE_CONNECTION',
-        useFactory: async () => {
-            const config = getConfig();
+        useFactory: async (config) => {
             return await createConnection({
                 type: 'postgres',
                 url: config.postgresUrl,
@@ -15,5 +13,6 @@ export const databaseProviders = [
                 synchronize: false
             })
         },
+      inject: ['CONFIG']
     },
 ];

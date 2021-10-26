@@ -8,4 +8,6 @@ RUN npm install
 
 COPY ./offchain .
 
-CMD ["npm", "start"]
+RUN npm run build
+
+CMD ["npm", "run", "prod"]

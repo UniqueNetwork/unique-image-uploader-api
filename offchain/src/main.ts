@@ -4,7 +4,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { createConnection } from 'typeorm';
 
 import { AppModule } from './app.module';
-import { getConfig } from './config'
 import { activeMigrations } from './migrations';
 
 
@@ -15,13 +14,13 @@ const initSwagger = (app: INestApplication, config) => {
 }
 
 const runMigrations = async (config) => {
-  const connection = await createConnection({name: "migrations", type: 'postgres', url: config.postgresUrl, logging: true, migrations: activeMigrations});
+  const connection = await createConnection({name: 'migrations', type: 'postgres', url: config.postgresUrl, logging: true, migrations: activeMigrations});
   await connection.runMigrations();
   await connection.close();
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule), config = getConfig();
+  const app = await NestFactory.create(AppModule), config = app.get('CONFIG');
   // TODO: separate this activity
   await runMigrations(config)
   initSwagger(app, config);
