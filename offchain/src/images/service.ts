@@ -1,4 +1,4 @@
-import { existsSync, writeFileSync, mkdirSync } from 'fs'
+import { promises as fsPromises, existsSync } from 'fs'
 import { join as pathJoin, basename, dirname } from 'path'
 import { createHash } from 'crypto'
 import { fromBuffer as fileTypeFromBuffer } from 'file-type'
@@ -57,13 +57,13 @@ export class ImageService {
     return pathJoin(dirPath, fileName);
   }
 
-  saveBufferToFs(buffer, fileName: string, config): SimpleStringResult {
+  async saveBufferToFs(buffer, fileName: string, config): Promise<SimpleStringResult> {
     const filePath = this.constructUploadPath(fileName, config);
     try {
-      mkdirSync(dirname(filePath), {recursive: true});
+      await fsPromises.mkdir(dirname(filePath), {recursive: true});
 
       if(!existsSync(filePath)) {
-        writeFileSync(filePath, buffer);
+        await fsPromises.writeFile(filePath, buffer);
       }
     }
     catch (e) {
@@ -88,7 +88,7 @@ export class ImageService {
     const mimeResult = await this.checkImageMimeType(file.buffer, config);
     if(!mimeResult.success) return {success: false, error: constants.fileErrors.ERR_INVALID_FILE_TYPE};
 
-    const fsResult = this.saveBufferToFs(file.buffer, `${fileHash.result}.${mimeResult.ext}`, config);
+    const fsResult = await this.saveBufferToFs(file.buffer, `${fileHash.result}.${mimeResult.ext}`, config);
     if(!fsResult.success) return {success: false, error: constants.fileErrors.ERR_INTERNAL_ERROR};
 
     const image = this.repository.create({collection_id: collectionId, hash: fileHash.result, tmp_address: fsResult.result});

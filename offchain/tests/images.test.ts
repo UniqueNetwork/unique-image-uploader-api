@@ -1,5 +1,5 @@
 import { join } from 'path'
-import { mkdirSync, rmdirSync } from 'fs';
+import { mkdirSync, rmSync } from 'fs';
 
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -20,7 +20,7 @@ describe('Images service', () => {
   });
 
   afterAll(() => {
-    rmdirSync(tmpDir, {recursive: true});
+    rmSync(tmpDir, {recursive: true});
   });
 
   it('/api/images/upload/ (POST, bad request, no collection)', () => {

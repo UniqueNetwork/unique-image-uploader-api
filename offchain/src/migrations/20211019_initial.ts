@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
 
 export class Initial_20211019000000 implements MigrationInterface {
   async up(queryRunner: QueryRunner): Promise<void> {
@@ -32,11 +32,6 @@ export class Initial_20211019000000 implements MigrationInterface {
           isNullable: true
         },
         {
-          name: "ipfs_address",
-          type: "text",
-          isNullable: true
-        },
-        {
           name: "tmp_address",
           type: "text",
           isNullable: true
@@ -57,6 +52,45 @@ export class Initial_20211019000000 implements MigrationInterface {
     await queryRunner.createIndex("image", new TableIndex({
       name: "IDX_IMAGE_TOKEN_ID",
       columnNames: ["token_id"]
+    }));
+
+    await queryRunner.createTable(new Table({
+      name: "image_storage",
+      columns: [
+        {
+          name: "id",
+          type: "bigint",
+          isPrimary: true,
+          isGenerated: true,
+          generationStrategy: "increment"
+        },
+        {
+          name: "created_at",
+          type: "timestamp",
+          default: "now()"
+        },
+        {
+          name: "storage_backend",
+          type: "varchar",
+          length: "32"
+        },
+        {
+          name: "image_id",
+          type: "bigint"
+        },
+        {
+          name: "data",
+          type: "jsonb"
+        }
+      ]
+    }), true);
+
+    await queryRunner.createForeignKey("image_storage", new TableForeignKey({
+      columnNames: ["image_id"],
+      referencedColumnNames: ["id"],
+      referencedTableName: "image",
+      name: "REF_IMAGE_STORAGE_IMAGE_ID",
+      onDelete: "CASCADE"
     }));
 
     await queryRunner.createTable(new Table({
@@ -107,6 +141,8 @@ export class Initial_20211019000000 implements MigrationInterface {
   async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropIndex("upload_log", "IDX_UPLOAD_LOG_CREATED_AT");
     await queryRunner.dropTable("upload_log");
+    await queryRunner.dropForeignKey("image_storage", "REF_IMAGE_STORAGE_IMAGE_ID");
+    await queryRunner.dropTable("image_storage")
     await queryRunner.dropIndex("image", "IDX_IMAGE_CREATED_AT");
     await queryRunner.dropIndex("image", "IDX_IMAGE_COLLECTION_ID");
     await queryRunner.dropIndex("image", "IDX_IMAGE_TOKEN_ID");
