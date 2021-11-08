@@ -1,5 +1,5 @@
 import { join } from 'path'
-import { mkdirSync, rmSync } from 'fs';
+import { mkdirSync, rmSync, existsSync } from 'fs';
 
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -10,7 +10,7 @@ import * as constants from '../src/constants';
 describe('Images service', () => {
   let app: INestApplication;
   const tmpDir = join('/tmp', `jest-test-${new Date().getTime()}`);
-  jest.setTimeout(60 * 1000);
+  // jest.setTimeout(60 * 1000);
 
   beforeAll(async () => {
     mkdirSync(tmpDir, {recursive: true});
@@ -39,10 +39,12 @@ describe('Images service', () => {
     response = response.field('collection_id', 1).attach('file', join(config.projectDir, '..', 'tests', 'jest.config.json'));
     return response.expect(400).expect({success: false, error: constants.fileErrors.ERR_INVALID_FILE_TYPE});
   });
-  it('/api/images/upload/ (POST, valid image)', () => {
+  it('/api/images/upload/ (POST, valid image)', async () => {
     const config = app.get('CONFIG');
     let response = request(app.getHttpServer()).post('/api/images/upload/');
     response = response.field('collection_id', 1).attach('file', join(config.projectDir, '..', 'tests', 'data', 'punk.png'));
-    return response.expect(201).expect({success: true, hash: '16d103ce510364bcf22d6934afb5d541175f56c8ae38c7d5a8d4d48ffdf29018'});
+
+    await response.expect(201).expect({success: true, hash: '16d103ce510364bcf22d6934afb5d541175f56c8ae38c7d5a8d4d48ffdf29018'});
+    await expect(existsSync(join(tmpDir, '16', 'd1', '16d103ce510364bcf22d6934afb5d541175f56c8ae38c7d5a8d4d48ffdf29018.png'))).toBe(true);
   });
 });
