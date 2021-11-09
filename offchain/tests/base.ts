@@ -22,8 +22,8 @@ export const initApp = async (config?): Promise<INestApplication> => {
   return moduleFixture.createNestApplication();
 }
 
-export const getMigrationsConnection = async (config) => {
-  return await createConnection({name: 'migrations', type: 'postgres', url: config.postgresUrl, logging: true, migrations: activeMigrations});
+export const getMigrationsConnection = async (config, logging = false) => {
+  return await createConnection({name: 'migrations', type: 'postgres', url: config.postgresUrl, logging: logging, migrations: activeMigrations});
 }
 
 export const runMigrations = async (config) => {

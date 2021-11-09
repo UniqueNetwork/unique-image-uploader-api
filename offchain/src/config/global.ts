@@ -6,6 +6,9 @@ export default {
   postgresUrl: process.env.POSTGRES_URL || 'postgres://offchain:12345@offchain-postgres:5432/offchain',
   testingPostgresUrl: 'postgres://test:test@test-postgres:5432/test',
   projectDir: normalize(join(__dirname, '..')),
+  dev: {
+    debugMigrations: false
+  },
   swagger: {
     title: 'Unique offchain API',
     version: '1',

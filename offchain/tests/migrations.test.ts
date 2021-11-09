@@ -13,7 +13,8 @@ describe('Migrations', () => {
   });
 
   it('Rollback migrations', async () => {
-    const conn = await getMigrationsConnection(app.get('CONFIG'));
+    const config = app.get('CONFIG');
+    const conn = await getMigrationsConnection(config, config.dev.debugMigrations);
     await conn.dropDatabase();
     await conn.runMigrations();
     const migrationExecutor = new MigrationExecutor(conn);

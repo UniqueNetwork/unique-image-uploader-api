@@ -1,5 +1,5 @@
 import { join } from 'path'
-import { mkdirSync, rmSync, existsSync } from 'fs';
+import {mkdirSync, rmSync, existsSync, readFileSync, read} from 'fs';
 
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
@@ -21,6 +21,22 @@ describe('Images service', () => {
 
   afterAll(() => {
     rmSync(tmpDir, {recursive: true});
+  });
+
+  it('/images/:collection/cover-image/ (GET, collection without cover image yet)', async () => {
+    const config = app.get('CONFIG');
+    const response = await request(app.getHttpServer()).get('/images/9000/cover-image/');
+    await expect(response.statusCode).toBe(200);
+    await expect(response.headers['content-type']).toBe('image/svg+xml');
+    await expect(response.body).toEqual(readFileSync(join(config.projectDir, '..', 'static', 'no-image.svg')));
+  });
+
+  it('/images/:collection/token/:token/ (GET, token without image yet)', async () => {
+    const config = app.get('CONFIG');
+    const response = await request(app.getHttpServer()).get('/images/9000/token/100500/');
+    await expect(response.statusCode).toBe(200);
+    await expect(response.headers['content-type']).toBe('image/svg+xml');
+    await expect(response.body).toEqual(readFileSync(join(config.projectDir, '..', 'static', 'no-image.svg')));
   });
 
   it('/api/images/upload/ (POST, bad request, no collection)', () => {

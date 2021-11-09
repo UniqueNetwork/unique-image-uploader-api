@@ -1,8 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 
 describe('Polkadot api', () => {
-  jest.setTimeout(60 * 1000);
-
   it('Opal connection test', async () => {
     const wsProvider = new WsProvider('wss://ws-opal.unique.network');
     const api = await ApiPromise.create({ provider: wsProvider });
