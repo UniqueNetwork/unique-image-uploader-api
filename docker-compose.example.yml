@@ -1,20 +1,13 @@
 version: "3.5"
 
 services:
-  offchain-postgres:
-    image: postgres:14.0-alpine
-    container_name: offchain-postgres
-    environment:
-      POSTGRES_DB: 'offchain'
-      POSTGRES_USER: 'offchain'
-      POSTGRES_PASSWORD: '12345'
-      POSTGRES_PORT: '5432'
-      POSTGRES_INITDB_ARGS: "--auth-local=trust"
+  offchain-ipfs-node:
+    image: ipfs/go-ipfs
+    container_name: offchain-ipfs-node
     ports:
-      - 5432:5432
+      - 8080:8080
     volumes:
-      - ../postgresql/offchain:/var/lib/postgresql/data
-      - /etc/localtime:/etc/localtime:ro
+      - ../ipfs/offchain:/data/ipfs
 
   offchain-web:
     build:
@@ -23,11 +16,8 @@ services:
     image: offchain-web
     container_name: offchain-web
     environment:
-      POSTGRES_URL: 'postgres://offchain:12345@offchain-postgres:5432/offchain'
-      UPLOADS_DIR: '/uploads'
+      IPFS_URL: 'http://offchain-ipfs-node:5001/api/v0'
     ports:
       - 5000:5000
-    volumes:
-      - ./uploads:/uploads
     depends_on:
-      - offchain-postgres
+      - offchain-ipfs-node
