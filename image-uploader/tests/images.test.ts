@@ -18,15 +18,16 @@ describe('Images service', () => {
     app.close();
   });
 
-  it('/api/images/upload/ (POST, bad request, no file)', () => {
-    const response = request(app.getHttpServer()).post('/api/images/upload/').field('collection_id', 1);
-    return response.expect(400).expect({success: false, error: constants.dataErrors.ERR_INVALID_PAYLOAD});
+  it('/api/images/upload/ (POST, bad request, no file)', async () => {
+    const response = await request(app.getHttpServer()).post('/api/images/upload/');
+    await expect(response.statusCode).toBe(400);
+    await expect(response.body).toEqual({success: false, error: constants.dataErrors.ERR_INVALID_PAYLOAD});
   });
-  it('/api/images/upload/ (POST, invalid image)', () => {
+  it('/api/images/upload/ (POST, invalid image)', async () => {
     const config = app.get('CONFIG');
-    let response = request(app.getHttpServer()).post('/api/images/upload/');
-    response = response.field('collection_id', 1).attach('file', join(config.projectDir, '..', 'tests', 'jest.config.json'));
-    return response.expect(400).expect({success: false, error: constants.fileErrors.ERR_INVALID_FILE_TYPE});
+    const response = await request(app.getHttpServer()).post('/api/images/upload/').attach('file', join(config.projectDir, '..', 'tests', 'jest.config.json'));
+    await expect(response.statusCode).toBe(400);
+    await expect(response.body).toEqual({success: false, error: constants.fileErrors.ERR_INVALID_FILE_TYPE});
   });
   it('/api/images/upload/ (POST, valid image)', async () => {
     const config = app.get('CONFIG');

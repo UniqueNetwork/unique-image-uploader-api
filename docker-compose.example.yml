@@ -1,23 +1,23 @@
 version: "3.5"
 
 services:
-  offchain-ipfs-node:
+  image-uploader-ipfs-node:
     image: ipfs/go-ipfs
-    container_name: offchain-ipfs-node
+    container_name: image-uploader-ipfs-node
     ports:
       - 8080:8080
     volumes:
-      - ../ipfs/offchain:/data/ipfs
+      - ../ipfs/image-uploader:/data/ipfs
 
-  offchain-web:
+  image-uploader-web:
     build:
       context: .
       dockerfile: Dockerfile
-    image: offchain-web
-    container_name: offchain-web
+    image: image-uploader-web
+    container_name: image-uploader-web
     environment:
-      IPFS_URL: 'http://offchain-ipfs-node:5001/api/v0'
+      IPFS_URL: 'http://image-uploader-ipfs-node:5001/api/v0'
     ports:
       - 5000:5000
     depends_on:
-      - offchain-ipfs-node
+      - image-uploader-ipfs-node

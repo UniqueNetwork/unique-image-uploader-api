@@ -1,7 +1,7 @@
 {
-  "name": "offchain",
+  "name": "image-uploader",
   "version": "0.0.1",
-  "description": "Offchain service backend",
+  "description": "Image uploader service backend",
   "author": "Unique Network",
   "private": true,
   "license": "UNLICENSED",
