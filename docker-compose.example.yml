@@ -6,6 +6,7 @@ services:
     container_name: image-uploader-ipfs-node
     ports:
       - 8080:8080
+      - 4001:4001
     volumes:
       - ../ipfs/image-uploader:/data/ipfs
 
