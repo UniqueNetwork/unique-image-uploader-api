@@ -8,6 +8,7 @@ import { Injectable, Inject } from '@nestjs/common';
 
 import { MimeValidateResult, SimpleStringResult, UploadResult } from './dto';
 import * as constants from '../constants';
+import { extname } from 'path';
 
 
 @Injectable()
@@ -17,7 +18,7 @@ export class ImageService {
     private config
   ) {}
 
-  async checkImageMimeType(imageBuffer, config): Promise<MimeValidateResult> {
+  async checkImageMimeType(imageBuffer, config, extraMime): Promise<MimeValidateResult> {
     let typeResult;
     try {
       typeResult = await fileTypeFromBuffer(imageBuffer);
@@ -26,7 +27,12 @@ export class ImageService {
       return {success: false};
     }
 
+    if (!typeResult && extraMime) {
+      typeResult = extraMime;
+    }
+
     if(!typeResult) return {success: false};
+
 
     const isAllowed = config.allowedImageTypes.indexOf(typeResult.mime) >= 0;
 
@@ -52,7 +58,10 @@ export class ImageService {
   async uploadFile(file): Promise<UploadResult> {
     if(!file) return {success: false, error: constants.dataErrors.ERR_INVALID_PAYLOAD};
 
-    const mimeResult = await this.checkImageMimeType(file.buffer, this.config);
+    const mimeResult = await this.checkImageMimeType(file.buffer, this.config, {
+      mime: file.mimetype,
+      ext: extname(file.originalname).slice(1),
+    });
     if(!mimeResult.success) return {success: false, error: constants.fileErrors.ERR_INVALID_FILE_TYPE};
 
     const ipfsResult = await this.saveBufferToIPFS(file.buffer,  this.config);
