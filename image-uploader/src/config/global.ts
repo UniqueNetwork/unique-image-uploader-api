@@ -10,5 +10,5 @@ export default {
     version: '1',
     description: ''
   },
-  allowedImageTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+  allowedImageTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']
 }
