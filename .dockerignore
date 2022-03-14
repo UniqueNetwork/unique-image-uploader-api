@@ -1,7 +1,8 @@
-offchain/src/config/*.ts
-offchain/node_modules
-offchain/dist
-!offchain/src/config/global.ts
-!offchain/src/config/index.ts
-!offchain/src/config/module.ts
-!offchain/src/config/providers.ts
+image-uploader/dist
+image-uploader/node_modules
+image-uploader/package-lock.json
+image-uploader/src/config/*
+!image-uploader/src/config/index.ts
+!image-uploader/src/config/global.ts
+!image-uploader/src/config/module.ts
+!image-uploader/src/config/providers.ts

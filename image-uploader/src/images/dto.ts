@@ -1,6 +1,6 @@
 export class UploadResult {
   success: boolean;
-  hash?: string;
+  address?: string;
   error?: string;
 }
 

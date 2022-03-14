@@ -1,1 +1,1 @@
-# unique-offchain-api
+# unique-image-uploader-api

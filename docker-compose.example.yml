@@ -1,33 +1,24 @@
 version: "3.5"
 
 services:
-  offchain-postgres:
-    image: postgres:14.0-alpine
-    container_name: offchain-postgres
-    environment:
-      POSTGRES_DB: 'offchain'
-      POSTGRES_USER: 'offchain'
-      POSTGRES_PASSWORD: '12345'
-      POSTGRES_PORT: '5432'
-      POSTGRES_INITDB_ARGS: "--auth-local=trust"
+  image-uploader-ipfs-node:
+    image: ipfs/go-ipfs
+    container_name: image-uploader-ipfs-node
     ports:
-      - 5432:5432
+      - 8080:8080
+      - 4001:4001
     volumes:
-      - ../postgresql/offchain:/var/lib/postgresql/data
-      - /etc/localtime:/etc/localtime:ro
+      - ../ipfs/image-uploader:/data/ipfs
 
-  offchain-web:
+  image-uploader-web:
     build:
       context: .
       dockerfile: Dockerfile
-    image: offchain-web
-    container_name: offchain-web
+    image: image-uploader-web
+    container_name: image-uploader-web
     environment:
-      POSTGRES_URL: 'postgres://offchain:12345@offchain-postgres:5432/offchain'
-      UPLOADS_DIR: '/uploads'
+      IPFS_URL: 'http://image-uploader-ipfs-node:5001/api/v0'
     ports:
       - 5000:5000
-    volumes:
-      - ./uploads:/uploads
     depends_on:
-      - offchain-postgres
+      - image-uploader-ipfs-node

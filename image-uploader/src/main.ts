@@ -1,10 +1,8 @@
 import { INestApplication } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { createConnection } from 'typeorm';
 
 import { AppModule } from './app.module';
-import { activeMigrations } from './migrations';
 
 
 const initSwagger = (app: INestApplication, config) => {
@@ -13,16 +11,10 @@ const initSwagger = (app: INestApplication, config) => {
   SwaggerModule.setup('api/docs/', app, swaggerDocument);
 }
 
-const runMigrations = async (config) => {
-  const connection = await createConnection({name: 'migrations', type: 'postgres', url: config.postgresUrl, logging: true, migrations: activeMigrations});
-  await connection.runMigrations();
-  await connection.close();
-}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule), config = app.get('CONFIG');
-  // TODO: separate this activity
-  await runMigrations(config)
+
   initSwagger(app, config);
   await app.listen(config.listenPort, '0.0.0.0');
 }

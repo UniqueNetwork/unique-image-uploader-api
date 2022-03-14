@@ -1,7 +1,7 @@
 {
-  "name": "offchain",
+  "name": "image-uploader",
   "version": "0.0.1",
-  "description": "Offchain service backend",
+  "description": "Image uploader service backend",
   "author": "Unique Network",
   "private": true,
   "license": "UNLICENSED",
@@ -27,11 +27,8 @@
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "swagger-ui-express": "4.1.6",
-    "typeorm": "0.2.38",
-    "pg": "8.7.1",
-    "nestjs-real-ip": "2.0.0",
     "file-type": "16.5.3",
-    "@polkadot/api": "6.5.1"
+    "ipfs-http-client": "53.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^8.0.0",
